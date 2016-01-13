@@ -4,7 +4,7 @@ OCAMLBUILD= ocamlbuild -no-links -classic-display \
 TARGET=byte
 MAIN=Main
 
-main:
+all:
 	$(OCAMLBUILD) $(MAIN).$(TARGET)
 	cp _build/$(MAIN).$(TARGET) $(MAIN)
 

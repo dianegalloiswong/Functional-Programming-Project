@@ -1,4 +1,4 @@
-(* Basic examples, without subtying.  They should all fail. *)
+(* Basic examples, without subtyping.  They should all fail. *)
 
 float 3.14;;
 
