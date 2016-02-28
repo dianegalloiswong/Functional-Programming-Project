@@ -63,7 +63,7 @@ let rec infer env e =
       tres
   (* Records *)
   | Erecord l -> Record (List.map (fun (lab, e) -> (lab, infer env e)) l)
-      (* TODO: check that labels are all distinct? *)
+      (* Labels are all distinct: checked by the parser. *)
   | Efield (e, lab) ->
       let t = infer env e in
 	  let rt = match t with Record rt -> rt | _ -> type_error "expected a record type" in

@@ -1,0 +1,20 @@
+
+
+(* Coercions that don't change representation: records with more than one field. *)
+
+({x = 1; y = 3.14} : {x : int; y : T});;
+
+({x = 1; y = 3.14; z = 0} : {x : int; y : float; z : T});;
+
+
+(* Not immediately a coercion that doesn't change representation although the coercion is tuple(1:id, 2:id)), because of the different lengths. Actually falls in the case of big record coerced to smaller record, then only doesn't change representation. *)
+({x = 1; y = 3.14; z = 0} : {x : int; y : float});;
+
+
+(* Telescopes of coercions: identity *)
+
+((1:int): float);;
+
+((1:float): float);;
+
+(({x = 1} : {x : T}) : T);;

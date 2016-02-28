@@ -1,0 +1,12 @@
+J'ai implémenté les optimisations suggérées par les exemples du fichier optims.
+
+
+Remarques sur l'application de coercion de la forme Crecord dans Expand.ml :
+Si l'expression Lambda à traiter représentant l'enregistrement est un n-uplet, j'utilise directement List.nth pour accéder à ses champs. Sinon, j'utilise le constructeur Lfield pour accéder aux champs, en m'assurant que je travaille sur une variable représentant l'enregistrement afin de ne pas calculer celui-ci plusieurs fois.
+Avoir un cas particulier pour un n-uplet pourrait être considéré comme une optimisation, ce qui n'est pas censé être le rôle de Expand.ml. J'ai envisagé d'introduire une optimisation correspondante dans Optimize.ml : transformer une coercion de forme Crecord appliquée à un n-uplet en un n-uplet réordonné, avec des coercions distribuées sur chaque champ. Ce serait facile à faire à l'endroit où j'optimise la coercion de grand enregistrement en plus petit enregistrement (même condition : application de Crecord à un n-uplet ; le réordonnement est même effectué). J'ai finalement décidé de ne pas le faire, de peur de faire disparaître des optimisations potentielles, par exemple une projection de champ suite à une coercion de type Crecord qui n'existerait plus si les coercions pour chaque champ sont distribuées. Bien sûr, cela pourrait aussi faire apparaître de nouvelles optimisations...
+
+
+
+
+
+(* Having a different case for Ltuple may be seen as an optimization. I considered doing it in Optimize.ml: optimizing a record coercion applied to a tuple into a tuple with coercions distributed into each field; I could have done this at the same time as  distributing  the coercion *)

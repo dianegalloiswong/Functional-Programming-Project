@@ -13,11 +13,18 @@ let rec apply_coercion (c: coercion) (l: lam) : lam =
   | Cid -> l
   | Cint2float -> Lunop(Ofloatofint, l)
   | Cfun(c1, c2) ->
+(*      let x, apply_l_to = match l with
+	    | Labstr(x, le) -> x, fun l' -> if l' = Lvar x then le else Llet(x, l', le)
+		| _ -> fresh_variable (), fun l' -> Lapp(l ,l')
+	  in 
+	  Labstr(x, apply_coercion c2 (apply_l_to (apply_coercion c1 (Lvar x))))
+*)
 	  let x = fresh_variable () in
 	  let l1 = apply_coercion c1 (Lvar x) in
 	  let lapp = Lapp(l, l1) in
 	  let l2 = apply_coercion c2 lapp in
 	  Labstr(x, l2)
+
 (*	  let x, le = match l with
 	    | Labstr(x, le) -> x, le
 		| _ -> (Format.printf "\nError in Expand: function coercion so following lam should be of form Labstr@."; print_lam l; assert false)
@@ -28,11 +35,27 @@ let rec apply_coercion (c: coercion) (l: lam) : lam =
 	  Labstr(x, l2)
 *)
   | Crecord ics ->
-	  let r = fresh_variable () in
+	  let from_record_variable (r: variable) =
+		let compute_field (i, c) = apply_coercion c (Lfield(Lvar r, i)) in
+		Ltuple (List.map compute_field ics)
+	  in
+	  begin 
+	    match l with
+		  | Ltuple ls ->
+		      let compute_field (i, c) = apply_coercion c (List.nth ls (i-1)) in
+			  Ltuple (List.map compute_field ics)
+		  | Lvar r -> from_record_variable r
+		  | _ -> let r = fresh_variable () in Llet(r, l, from_record_variable r)
+	  end
+	  (* If [l] is a tuple, its fields can be accessed directly with List.nth. Otherwise, we use the Lfield construction and we force the use of a variable representing the record so that it is not evaluated multiple times.*)
+	  
+	  
+(*	  let r = fresh_variable () in
 	  let tuple = List.map (fun (i, c) ->
 	    apply_coercion c (Lfield(Lvar r, i))
 	  ) ics in
 	  Llet(r, l, Ltuple tuple)
+*)
 (*	  let r = match l with
 	    | Ltuple r -> r
 		| _ -> (Format.printf "\nError in Expand: record coercion so following lam should be of form Ltuple@."; print_lam l; assert false)

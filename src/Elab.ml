@@ -89,7 +89,7 @@ let rec elab env = function
 	    let t, le = elab env e in (lab, t), le
 	  ) l in
 	  Record (List.map fst lab_t_le_list), Ltuple (List.map snd lab_t_le_list)
-      (* TODO: check that labels are all distinct? *)
+      (* Labels are all distinct: checked by the parser. *)
   | Efield (e, lab) ->
 	let t, le = elab env e in
 	let rt = match t with Record rt -> rt | _ -> type_error "expected a record type" in
