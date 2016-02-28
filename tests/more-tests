@@ -8,6 +8,7 @@
 
 
 (* Not immediately a coercion that doesn't change representation although the coercion is tuple(1:id, 2:id)), because of the different lengths. Actually falls in the case of big record coerced to smaller record, then only doesn't change representation. *)
+
 ({x = 1; y = 3.14; z = 0} : {x : int; y : float});;
 
 
@@ -18,3 +19,20 @@
 ((1:float): float);;
 
 (({x = 1} : {x : T}) : T);;
+
+
+(* Propagate coercion inside [let] to try and enable new optimizations *)
+
+(* enable coercion of big record into smaller record then coercion that doesn't change representation*)
+let f (r: {x:int; y:int}) = r.x + r.y in
+f (let a = 2 in {x=a; y=a+a; z=a+15});;
+
+
+
+(* Misc. *)
+
+((fun (f: float -> float) -> fun (x:int) -> f x): (float -> int) -> int -> float);;
+
+
+
+
