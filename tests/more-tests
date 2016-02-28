@@ -28,11 +28,11 @@ let f (r: {x:int; y:int}) = r.x + r.y in
 f (let a = 2 in {x=a; y=a+a; z=a+15});;
 
 
+(* Do not evaluate record multiple times even if it is neither a tuple nor a variable *)
+
+let f (x: T) = {x=0; y=1; z=2} in ((f 0) : {x:int; y:float; z:int});;
+
 
 (* Misc. *)
 
 ((fun (f: float -> float) -> fun (x:int) -> f x): (float -> int) -> int -> float);;
-
-
-
-
